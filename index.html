@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional CV Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e7f1 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        header p {
+            font-size: 1.2rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .app-container {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .form-section {
+            flex: 1;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            height: fit-content;
+        }
+
+        .preview-section {
+            flex: 1;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+            transform: translateY(-2px);
+        }
+
+        .template-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .template {
+            flex: 1;
+            border: 2px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            padding: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .template:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .template.active {
+            border-color: var(--primary);
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .template .template-preview {
+            height: 120px;
+            background: linear-gradient(135deg, #f0f4f8 25%, #e2e8f0 25%, #e2e8f0 50%, #f0f4f8 50%, #f0f4f8 75%, #e2e8f0 75%, #e2e8f0 100%);
+            background-size: 40px 40px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template .template-preview::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 40%;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        .template .template-preview::after {
+            content: "";
+            position: absolute;
+            top: 40px;
+            left: 10px;
+            width: 70%;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        .template-1 .template-preview::before {
+            width: 70%;
+            background: var(--primary);
+        }
+
+        .template-1 .template-preview::after {
+            width: 50%;
+            background: var(--accent);
+        }
+
+        .template-2 .template-preview::before {
+            width: 40%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--secondary);
+        }
+
+        .template-2 .template-preview::after {
+            width: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+        }
+
+        .template-3 .template-preview::before {
+            width: 70%;
+            background: #3a0ca3;
+        }
+
+        .template-3 .template-preview::after {
+            width: 50%;
+            background: #7209b7;
+        }
+
+        .template h3 {
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .template p {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .preview-container {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            min-height: 600px;
+            border: 1px solid var(--light-gray);
+        }
+
+        .actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .export-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .export-overlay.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .export-message {
+            background: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .export-message i {
+            font-size: 3rem;
+            color: #2ecc71;
+            margin-bottom: 15px;
+        }
+
+        .export-message h3 {
+            margin-bottom: 10px;
+        }
+
+        /* CV Template Styles */
+        .cv-template {
+            background: white;
+            min-height: 100%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+
+        .cv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .cv-name {
+            font-size: 2.2rem;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .cv-title {
+            font-size: 1.3rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+
+        .cv-contact {
+            text-align: right;
+        }
+
+        .cv-contact p {
+            margin: 3px 0;
+            font-size: 0.95rem;
+        }
+
+        .cv-section {
+            margin-bottom: 25px;
+        }
+
+        .cv-section-title {
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .cv-item {
+            margin-bottom: 15px;
+        }
+
+        .cv-item-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--dark);
+        }
+
+        .cv-item-subtitle {
+            font-weight: 500;
+            color: var(--gray);
+            font-size: 0.95rem;
+            margin: 3px 0;
+        }
+
+        .cv-item-duration {
+            font-style: italic;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .cv-item-description {
+            margin-top: 8px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            background: var(--light-gray);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Template 2 */
+        .template-2 .cv-header {
+            flex-direction: column;
+            text-align: center;
+            border-bottom: none;
+            padding-bottom: 10px;
+        }
+
+        .template-2 .cv-contact {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .template-2 .cv-section-title {
+            background: var(--light-gray);
+            padding: 8px 15px;
+            border-radius: 4px;
+            border-bottom: none;
+        }
+
+        /* Template 3 */
+        .template-3 {
+            background: #f0f4f8;
+        }
+
+        .template-3 .cv-header {
+            background: var(--primary);
+            color: white;
+            padding: 30px;
+            margin: -40px -40px 30px -40px;
+            border-bottom: none;
+        }
+
+        .template-3 .cv-name {
+            color: white;
+        }
+
+        .template-3 .cv-title {
+            color: rgba(255,255,255,0.8);
+        }
+
+        .template-3 .cv-contact p {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .template-3 .cv-section-title {
+            color: var(--secondary);
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .template-3 .cv-item {
+            background: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Responsive design */
+        @media (max-width: 992px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .template-selector {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .cv-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .cv-contact {
+                text-align: center;
+                margin-top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Professional CV Generator</h1>
+            <p>Create, customize, and export your resume in minutes with our easy-to-use tool</p>
+        </header>
+
+        <div class="app-container">
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-edit"></i> Edit Your CV</h2>
+                
+                <div class="form-group">
+                    <label>Select Template</label>
+                    <div class="template-selector">
+                        <div class="template template-1 active" data-template="1">
+                            <div class="template-preview"></div>
+                            <h3>Classic</h3>
+                            <p>Traditional and professional</p>
+                        </div>
+                        <div class="template template-2" data-template="2">
+                            <div class="template-preview"></div>
+                            <h3>Modern</h3>
+                            <p>Clean and contemporary</p>
+                        </div>
+                        <div class="template template-3" data-template="3">
+                            <div class="template-preview"></div>
+                            <h3>Creative</h3>
+                            <p>Unique and stylish</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" placeholder="John Doe" value="Alex Johnson">
+                </div>
+                
+                <div class="form-group">
+                    <label for="jobTitle">Professional Title</label>
+                    <input type="text" id="jobTitle" placeholder="Software Engineer" value="Senior Frontend Developer">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="john.doe@example.com" value="alex.johnson@example.com">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="text" id="phone" placeholder="+1 (123) 456-7890" value="+1 (555) 123-4567">
+                </div>
+                
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <input type="text" id="location" placeholder="New York, NY" value="San Francisco, CA">
+                </div>
+                
+                <div class="form-group">
+                    <label for="summary">Professional Summary</label>
+                    <textarea id="summary" placeholder="Experienced professional with...">Experienced Frontend Developer with 5+ years of expertise in creating responsive web applications. Proficient in JavaScript, React, and modern CSS frameworks. Passionate about creating intuitive user experiences and solving complex problems.</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Work Experience</label>
+                    <div id="experienceContainer">
+                        <div class="experience-entry form-row">
+                            <div class="form-group">
+                                <input type="text" class="exp-title" placeholder="Job Title" value="Senior Frontend Developer">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="exp-company" placeholder="Company" value="Tech Innovations Inc.">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="exp-duration" placeholder="Duration (e.g., 2020-2023)" value="2020-Present">
+                            </div>
+                            <div class="form-group">
+                                <textarea class="exp-description" placeholder="Responsibilities and achievements">Developed responsive web applications using React and TypeScript. Led a team of 5 developers to deliver projects on time. Improved application performance by 40% through code optimization.</textarea>
+                            </div>
+                        </div>
+                        <div class="experience-entry form-row">
+                            <div class="form-group">
+                                <input type="text" class="exp-title" placeholder="Job Title" value="Frontend Developer">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="exp-company" placeholder="Company" value="Digital Solutions LLC">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="exp-duration" placeholder="Duration (e.g., 2020-2023)" value="2018-2020">
+                            </div>
+                            <div class="form-group">
+                                <textarea class="exp-description" placeholder="Responsibilities and achievements">Created responsive user interfaces for e-commerce platforms. Collaborated with UX designers to implement design systems. Reduced load times by 30% through image optimization.</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" id="addExperience">
+                        <i class="fas fa-plus"></i> Add Experience
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label>Education</label>
+                    <div id="educationContainer">
+                        <div class="education-entry form-row">
+                            <div class="form-group">
+                                <input type="text" class="edu-degree" placeholder="Degree" value="B.S. Computer Science">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="edu-school" placeholder="School/University" value="Stanford University">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="edu-duration" placeholder="Duration (e.g., 2016-2020)" value="2014-2018">
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary" id="addEducation">
+                        <i class="fas fa-plus"></i> Add Education
+                    </button>
+                </div>
+                
+                <div class="form-group">
+                    <label for="skills">Skills (comma separated)</label>
+                    <textarea id="skills" placeholder="JavaScript, React, Project Management, ...">JavaScript, React, TypeScript, HTML5, CSS3, Responsive Design, Git, REST APIs, Vue.js, Node.js</textarea>
+                </div>
+            </div>
+            
+            <div class="preview-section">
+                <h2 class="section-title"><i class="fas fa-eye"></i> CV Preview</h2>
+                
+                <div class="preview-container">
+                    <div class="cv-template template-1" id="cvPreview">
+                        <!-- CV content will be rendered here -->
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button class="btn btn-primary" id="resetBtn">
+                        <i class="fas fa-redo"></i> Reset Form
+                    </button>
+                    <button class="btn btn-success" id="exportBtn">
+                        <i class="fas fa-file-pdf"></i> Export to PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="export-overlay" id="exportOverlay">
+        <div class="export-message">
+            <i class="fas fa-check-circle"></i>
+            <h3>PDF Generated Successfully!</h3>
+            <p>Your CV has been saved as a PDF file.</p>
+            <button class="btn btn-primary" id="closeOverlay" style="margin-top: 15px;">Close</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const fullNameEl = document.getElementById('fullName');
+            const jobTitleEl = document.getElementById('jobTitle');
+            const emailEl = document.getElementById('email');
+            const phoneEl = document.getElementById('phone');
+            const locationEl = document.getElementById('location');
+            const summaryEl = document.getElementById('summary');
+            const skillsEl = document.getElementById('skills');
+            const cvPreviewEl = document.getElementById('cvPreview');
+            const templates = document.querySelectorAll('.template');
+            const addExperienceBtn = document.getElementById('addExperience');
+            const addEducationBtn = document.getElementById('addEducation');
+            const experienceContainer = document.getElementById('experienceContainer');
+            const educationContainer = document.getElementById('educationContainer');
+            const resetBtn = document.getElementById('resetBtn');
+            const exportBtn = document.getElementById('exportBtn');
+            const exportOverlay = document.getElementById('exportOverlay');
+            const closeOverlay = document.getElementById('closeOverlay');
+            
+            let currentTemplate = '1';
+            
+            // Template selection
+            templates.forEach(template => {
+                template.addEventListener('click', () => {
+                    templates.forEach(t => t.classList.remove('active'));
+                    template.classList.add('active');
+                    currentTemplate = template.dataset.template;
+                    cvPreviewEl.className = `cv-template template-${currentTemplate}`;
+                    updateCVPreview();
+                });
+            });
+            
+            // Add experience entry
+            addExperienceBtn.addEventListener('click', () => {
+                const newEntry = document.createElement('div');
+                newEntry.className = 'experience-entry form-row';
+                newEntry.innerHTML = `
+                    <div class="form-group">
+                        <input type="text" class="exp-title" placeholder="Job Title">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="exp-company" placeholder="Company">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="exp-duration" placeholder="Duration (e.g., 2020-2023)">
+                    </div>
+                    <div class="form-group">
+                        <textarea class="exp-description" placeholder="Responsibilities and achievements"></textarea>
+                    </div>
+                    <button class="btn btn-secondary remove-btn" style="align-self: flex-start; margin-top: 10px;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                experienceContainer.appendChild(newEntry);
+                
+                // Add remove functionality
+                newEntry.querySelector('.remove-btn').addEventListener('click', () => {
+                    newEntry.remove();
+                    updateCVPreview();
+                });
+                
+                // Add input listeners
+                const inputs = newEntry.querySelectorAll('input, textarea');
+                inputs.forEach(input => {
+                    input.addEventListener('input', updateCVPreview);
+                });
+            });
+            
+            // Add education entry
+            addEducationBtn.addEventListener('click', () => {
+                const newEntry = document.createElement('div');
+                newEntry.className = 'education-entry form-row';
+                newEntry.innerHTML = `
+                    <div class="form-group">
+                        <input type="text" class="edu-degree" placeholder="Degree">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="edu-school" placeholder="School/University">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="edu-duration" placeholder="Duration (e.g., 2016-2020)">
+                    </div>
+                    <button class="btn btn-secondary remove-btn" style="align-self: flex-start; margin-top: 10px;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                educationContainer.appendChild(newEntry);
+                
+                // Add remove functionality
+                newEntry.querySelector('.remove-btn').addEventListener('click', () => {
+                    newEntry.remove();
+                    updateCVPreview();
+                });
+                
+                // Add input listeners
+                const inputs = newEntry.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.addEventListener('input', updateCVPreview);
+                });
+            });
+            
+            // Reset form
+            resetBtn.addEventListener('click', () => {
+                if (confirm('Are you sure you want to reset the form? All data will be lost.')) {
+                    document.querySelectorAll('input, textarea').forEach(input => {
+                        input.value = '';
+                    });
+                    
+                    // Remove all but the first experience and education entries
+                    const experienceEntries = document.querySelectorAll('.experience-entry');
+                    experienceEntries.forEach((entry, index) => {
+                        if (index > 0) entry.remove();
+                    });
+                    
+                    const educationEntries = document.querySelectorAll('.education-entry');
+                    educationEntries.forEach((entry, index) => {
+                        if (index > 0) entry.remove();
+                    });
+                    
+                    // Reset template to first one
+                    templates.forEach(t => t.classList.remove('active'));
+                    templates[0].classList.add('active');
+                    currentTemplate = '1';
+                    cvPreviewEl.className = `cv-template template-${currentTemplate}`;
+                    
+                    updateCVPreview();
+                }
+            });
+            
+            // Export to PDF
+            exportBtn.addEventListener('click', () => {
+                // Show exporting message
+                exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Exporting...';
+                exportBtn.disabled = true;
+                
+                // Create a clone of the CV preview for PDF export
+                const element = cvPreviewEl.cloneNode(true);
+                element.id = 'cv-export';
+                element.style.width = '210mm';
+                element.style.minHeight = '297mm';
+                element.style.padding = '25mm';
+                element.style.boxSizing = 'border-box';
+                document.body.appendChild(element);
+                
+                // Set PDF options
+                const opt = {
+                    margin: 0,
+                    filename: 'my-cv.pdf',
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 2,
+                        useCORS: true,
+                        logging: false,
+                        onclone: function(document) {
+                            // Remove interactive elements
+                            const buttons = document.querySelectorAll('button');
+                            buttons.forEach(btn => btn.remove());
+                        }
+                    },
+                    jsPDF: { 
+                        unit: 'mm', 
+                        format: 'a4', 
+                        orientation: 'portrait' 
+                    }
+                };
+                
+                // Generate PDF
+                html2pdf().set(opt).from(element).save().then(() => {
+                    // Clean up
+                    document.body.removeChild(element);
+                    
+                    // Reset export button
+                    exportBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Export to PDF';
+                    exportBtn.disabled = false;
+                    
+                    // Show success message
+                    exportOverlay.classList.add('visible');
+                }).catch(err => {
+                    console.error('Export failed:', err);
+                    alert('Export failed. Please try again.');
+                    document.body.removeChild(element);
+                    exportBtn.innerHTML = '<i class="fas fa-file-pdf"></i> Export to PDF';
+                    exportBtn.disabled = false;
+                });
+            });
+            
+            // Close overlay
+            closeOverlay.addEventListener('click', () => {
+                exportOverlay.classList.remove('visible');
+            });
+            
+            // Add input listeners to all form fields
+            document.querySelectorAll('#fullName, #jobTitle, #email, #phone, #location, #summary, #skills').forEach(input => {
+                input.addEventListener('input', updateCVPreview);
+            });
+            
+            // Add input listeners to initial experience and education entries
+            document.querySelectorAll('.exp-title, .exp-company, .exp-duration, .exp-description, .edu-degree, .edu-school, .edu-duration').forEach(input => {
+                input.addEventListener('input', updateCVPreview);
+            });
+            
+            // Initialize CV preview
+            updateCVPreview();
+            
+            // Update CV preview function
+            function updateCVPreview() {
+                // Get form values
+                const fullName = fullNameEl.value || 'Your Full Name';
+                const jobTitle = jobTitleEl.value || 'Professional Title';
+                const email = emailEl.value || 'email@example.com';
+                const phone = phoneEl.value || '+1 (123) 456-7890';
+                const location = locationEl.value || 'City, Country';
+                const summary = summaryEl.value || 'A brief summary of your professional background, skills, and career goals.';
+                const skills = skillsEl.value ? skillsEl.value.split(',').map(skill => skill.trim()) : ['Skill 1', 'Skill 2', 'Skill 3'];
+                
+                // Get experience data
+                const experiences = [];
+                document.querySelectorAll('.experience-entry').forEach(entry => {
+                    const title = entry.querySelector('.exp-title').value || 'Job Title';
+                    const company = entry.querySelector('.exp-company').value || 'Company Name';
+                    const duration = entry.querySelector('.exp-duration').value || 'Duration';
+                    const description = entry.querySelector('.exp-description').value || 'Description of responsibilities and achievements.';
+                    
+                    if (title || company) {
+                        experiences.push({ title, company, duration, description });
+                    }
+                });
+                
+                // Get education data
+                const educations = [];
+                document.querySelectorAll('.education-entry').forEach(entry => {
+                    const degree = entry.querySelector('.edu-degree').value || 'Degree';
+                    const school = entry.querySelector('.edu-school').value || 'School/University';
+                    const duration = entry.querySelector('.edu-duration').value || 'Duration';
+                    
+                    if (degree || school) {
+                        educations.push({ degree, school, duration });
+                    }
+                });
+                
+                // Generate CV HTML
+                let cvHTML = `
+                    <div class="cv-header">
+                        <div>
+                            <div class="cv-name">${fullName}</div>
+                            <div class="cv-title">${jobTitle}</div>
+                        </div>
+                        <div class="cv-contact">
+                            <p>${email}</p>
+                            <p>${phone}</p>
+                            <p>${location}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="cv-section">
+                        <div class="cv-section-title">Professional Summary</div>
+                        <p>${summary}</p>
+                    </div>
+                `;
+                
+                // Add experience section
+                if (experiences.length > 0) {
+                    cvHTML += `<div class="cv-section">
+                        <div class="cv-section-title">Work Experience</div>`;
+                    
+                    experiences.forEach(exp => {
+                        cvHTML += `
+                            <div class="cv-item">
+                                <div class="cv-item-title">${exp.title}</div>
+                                <div class="cv-item-subtitle">${exp.company}</div>
+                                <div class="cv-item-duration">${exp.duration}</div>
+                                <div class="cv-item-description">${exp.description}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    cvHTML += `</div>`;
+                }
+                
+                // Add education section
+                if (educations.length > 0) {
+                    cvHTML += `<div class="cv-section">
+                        <div class="cv-section-title">Education</div>`;
+                    
+                    educations.forEach(edu => {
+                        cvHTML += `
+                            <div class="cv-item">
+                                <div class="cv-item-title">${edu.degree}</div>
+                                <div class="cv-item-subtitle">${edu.school}</div>
+                                <div class="cv-item-duration">${edu.duration}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    cvHTML += `</div>`;
+                }
+                
+                // Add skills section
+                if (skills.length > 0) {
+                    cvHTML += `<div class="cv-section">
+                        <div class="cv-section-title">Skills</div>
+                        <div class="skills-list">`;
+                    
+                    skills.forEach(skill => {
+                        if (skill) {
+                            cvHTML += `<div class="skill-tag">${skill}</div>`;
+                        }
+                    });
+                    
+                    cvHTML += `</div></div>`;
+                }
+                
+                cvPreviewEl.innerHTML = cvHTML;
+            }
+        });
+    </script>
+</body>
+</html>
